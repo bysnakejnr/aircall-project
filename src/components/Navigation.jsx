@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaBeer } from "react-icons/fa";
-import '../css/navigation.css';
+
 
 const Navigation = () => {
     const Menus =[
