@@ -1,3 +1,10 @@
 h5{
     font-size: 0.6rem;
 }
+
+
+.scrollbarhidden::-webkit-scrollbar {
+    display: none;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }

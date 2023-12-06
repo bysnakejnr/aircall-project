@@ -1,6 +1,5 @@
 import React from 'react';
 import Header from '../components/Header';
-import Navigation from '../components/Navigation';
 import { IoMdArrowBack } from "react-icons/io";
 import {Link} from "react-router-dom";
 
