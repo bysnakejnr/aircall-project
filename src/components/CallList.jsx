@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import Loading from './Loading.jsx';
+import { IoArchiveOutline as ArchiveAll } from "react-icons/io5";
+import { LuArchiveRestore as UnarchiveAll } from "react-icons/lu";
 import { BiSolidArchiveIn, BiArchiveIn, BiArchiveOut } from "react-icons/bi";
 import { VscCallOutgoing as OutgoingCall, VscCallIncoming  as IncomingCall } from "react-icons/vsc";
 import { LuInfo as Info } from "react-icons/lu";
@@ -28,6 +30,8 @@ const CallList = () => {
         undefined : 'black'
     }
 
+
+    // Getting the initial data from API
     useEffect(()=>{
        
       setLoading(true)
@@ -42,7 +46,7 @@ const CallList = () => {
         .catch(error => console.log(error.message))
     },[])
 
-
+    // Formatting the Date function
     const formattedDate = (date) =>{
         return new Date(date).toLocaleString(
             "en-US",
@@ -53,7 +57,7 @@ const CallList = () => {
             }
         )
     }
-
+    // Formatting the Time function
     const formattedTime = (time) =>{
         return new Date(time).toLocaleString(
             "en-US",
@@ -63,7 +67,7 @@ const CallList = () => {
             }
         )
     }
-
+    // Sending a file to be archived
     const sendArchive = (id) =>{
         if(window.confirm("Archive this item?")){
         const objectToMove = activities.find((obj)=> obj.id === id);
@@ -87,7 +91,7 @@ const CallList = () => {
         };
         
     };
-
+    // A file getting removed from the archive
     const removeArchive = (id) =>{
         if(window.confirm("Unarchive this item?")){
             const objectToMove = filtered.find((obj)=> obj.id === id);
@@ -109,10 +113,11 @@ const CallList = () => {
             .catch((error)=>{console.log(error.message)});
            }
     }
-
+    // Empty all archive
     const resetArchive = () => {
+        if(filtered.length!==0){
         if(window.confirm("Are you sure to unarchive all calls?")){
-            if(filtered.length!==0){
+            
             setLoading(true);
         filtered.map((data)=>{
             const newData = data;
@@ -136,17 +141,18 @@ const CallList = () => {
             setLoading(false)});
         })
         }
-        else{
+       
+        } else{
             window.alert("There is nothing to unarchive.")
-        }
       }
     }
 
-
+    // Putting everything in Archive
     const allArchive = () => {
+        if(activities.length!==0){
         if(window.confirm("Are you sure to archive all calls?")){
            
-            if(activities.length!==0){
+            
                 setLoading(true);
         activities.map((data)=>{
             const newData = data;
@@ -169,21 +175,40 @@ const CallList = () => {
             setLoading(false)});
         })
     }
-    else{
+   
+      } else{
         window.alert("There is nothing to move.")
     }
-      }
     }
     
 
 
     return(
         <>
+        {/* Header Menu */}
         <h2 className='text-3xl font-medium'>{Menus[active].name}</h2>
         <div className='w-full h-96 mt-5  overflow-auto overflow-x-hidden scrollbarhidden'>
         
         <ul>
-            {active ===0 ? <button className='bg-white border-2 border-black opacity-50 text-black mt-2' disabled={loading===true ? true : false} onClick={allArchive}>Archive all</button> : <button className='bg-white border-2 border-black opacity-50 text-black mt-2' onClick={resetArchive}>Unarchive all</button>}
+            {/* Buttons for archiving and unarchiving (disabled if loading still)*/}
+            {active ===0 ? 
+            <div className='relative inline-flex items-center justify-center'>
+            <button className='bg-white border-2 border-black opacity-50 text-black mt-2 flex items-center' 
+            disabled={loading===true ? true : false} 
+            onClick={allArchive}><ArchiveAll className='mr-2'/>Archive all
+            </button> 
+            </div>
+            : 
+            <div className='relative inline-flex items-center justify-center'>
+  <button
+    className='bg-white border-2 border-black opacity-50 text-black mt-2 flex items-center'
+    disabled={loading === true ? true : false}
+    onClick={resetArchive}>
+    <UnarchiveAll className='mr-2' />
+    Unarchive All
+  </button>
+</div>
+            }
             {loading===true ? <div className='flex items-center justify-center mt-12'><Loading /></div> : 
             (active ===0 ? activities : filtered).map((call) =>
             {return(
@@ -197,7 +222,7 @@ const CallList = () => {
     {formattedDate(call.created_at)}</span>
 </div>
 
-
+{/* Call direction rendered as an icon */}
 <div className="grid relative hover:bg-gray-100 grid-cols-6 w-72 h-14 mx-auto text-gray-900 bg-white border border-gray-100 rounded-lg dark:bg-white border-2 text-black dark:border-gray-300 ">     
 <span class="absolute flex items-center justify-center h-5 w-5 rounded-full font-medium bg-red-500 border-2 border-gray-300 -top-2 -right-2 text-white" style={{fontSize:'0.7rem'}}>2</span>
 <div className='inline flex items-center mx-3'>
@@ -207,22 +232,21 @@ const CallList = () => {
 
 
 </div>
-<div className='col-span-3 mt-1'><h6 style={{color:`${colorByCallType[call.call_type]}`}}>{call.from}</h6>
-<p className='text-xs'></p></div>
+{/* Call type color coded = missed:red, voicemail:blue, answered:green */}
+<div className='col-span-3 mt-1'><h6 className='font-medium' style={{color:`${colorByCallType[call.call_type]}`}}>{call.from}</h6>
+<h5 className='text-xs capitalize'>{call.call_type}</h5></div>
 
 <div className='inline flex items-center col-span-2 justify-end text-center'>
 <h5 className='mx-2'>{formattedTime(call.created_at)}</h5>
 
-<Link to='/details/1' className='text-black inline-block'><Info size={'1.2em'} className='me-2'/></Link>
+{/* archiving and details */}
+<Link to={`/details/${call.id}`} className='text-black inline-block'><Info size={'1.2em'} className='me-2'/></Link>
 {active===0 ? 
 <Link className='sm' onClick={() => sendArchive(`${call.id}`)}><BiArchiveIn size={'1.2em'} className='me-2'/></Link>
 :
 <Link className='sm' onClick={() => removeArchive(`${call.id}`)}><BiArchiveOut size={'1.2em'} className='me-2'/></Link>
 }
 </div>
-
-
-
 
 
 </div>
@@ -233,8 +257,9 @@ const CallList = () => {
 }</ul>
 
 </div>
-<div className='flex justify-center mt-2'><h5 className=''>Scroll to see more</h5> <IoIosArrowDown className='animate-bounce' /></div>
+<div className='flex justify-center mt-2'><h5>Scroll to see more</h5> <IoIosArrowDown className='animate-bounce' /></div>
 
+{/* Active menu bar, bottom */}
 <div className="mt-4">
         <div className="bg-white min-h-[4.4rem] px-6 rounded-t-xl relativeinset-x-0 bottom-0">
       <ul className="flex relative">

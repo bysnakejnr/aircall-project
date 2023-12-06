@@ -9,6 +9,7 @@ const Loading = () => {
     return (
 
         <>
+        {/* Loader component */}
       <div class="loader"></div>
         </>
     )
