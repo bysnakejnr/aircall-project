@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.test:after {
+  content: '\2807';
+  font-size: 100px;
+  }
+
 a {
   font-weight: 500;
   color: #000000;

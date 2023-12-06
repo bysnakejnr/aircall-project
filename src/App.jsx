@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './style/App.css'
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header.jsx'
@@ -8,17 +8,20 @@ import CallDetails from './pages/CallDetails.jsx'
 
 
 function App() {
-  const [count, setCount] = useState(0)
+ 
 
   return (
     <>
+    
+    
     <div className='screen bg-gray-100 text-gray-900'>
       <Header />
       <div className="container-view mt-3 font-seif"><h2 className='text-3xl font-medium'>Active Calls</h2></div>
       <CallList />
       <Navigation />
-    
+      
       </div>
+
     </>
   )
 }
